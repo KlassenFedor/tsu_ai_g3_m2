@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 /tsu_ai_m2_dataset/
 .idea/
-/SemanticSegmentationLesson/
 /data/
 /notebooks/
+/segmentation/

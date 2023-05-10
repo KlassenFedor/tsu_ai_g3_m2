@@ -14,7 +14,7 @@ class UNet:
         self.unet = None
         self.__create()
         self.compile()
-        self.load_weights('../SemanticSegmentationLesson/networks/unet_like_aug_v3')
+        self.load_weights('../segmentation/networks/unet_like_aug_v3')
         self.train_dataset = None
         self.test_dataset = None
 
@@ -155,8 +155,7 @@ class UNet:
             self.__downsample_block(256, 4),
             self.__downsample_block(512, 4),
             self.__downsample_block(512, 4),
-            self.__downsample_block(512, 4),
-            self.__downsample_block(512, 4),
+            self.__downsample_block(512, 4)
         ]
 
         upsample_stack = [

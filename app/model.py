@@ -31,7 +31,7 @@ class Model:
     def demo(self, video_path):
         logging.info('Demonstration started')
 
-        self.structure.load_weights('../SemanticSegmentationLesson/networks/unet_like_aug_v3')
+        self.structure.load_weights('../segmentation/networks/unet_like_aug_v3')
         self.video_handler = VideoHandler(self.structure.unet)
         self.video_handler.show_video(video_path)
 
