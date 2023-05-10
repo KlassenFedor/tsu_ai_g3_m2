@@ -5,8 +5,7 @@ from skimage.morphology import dilation, disk
 from skimage.draw import polygon_perimeter
 from skimage import measure
 import imutils
-
-from app.utils.utils import apply_brightness_contrast
+from utilities.utils import apply_brightness_contrast
 
 
 class VideoHandler:

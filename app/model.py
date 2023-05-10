@@ -1,5 +1,5 @@
 from UNet import UNet
-from app.utils.video_handler import VideoHandler
+from video_handler import VideoHandler
 import fire
 import logging
 logging.basicConfig(level=logging.DEBUG, filename="../py_log.log", filemode="a")
@@ -31,7 +31,7 @@ class Model:
     def demo(self, video_path):
         logging.info('Demonstration started')
 
-        self.structure.load_weights('SemanticSegmentationLesson/networks/unet_like_aug_v2')
+        self.structure.load_weights('../SemanticSegmentationLesson/networks/unet_like_aug_v3')
         self.video_handler = VideoHandler(self.structure.unet)
         self.video_handler.show_video(video_path)
 

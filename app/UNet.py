@@ -3,7 +3,8 @@ import tensorflow as tf
 from pycocotools.coco import COCO
 from pathlib import Path
 import glob
-from app.utils.utils import get_contours_count_with_model, get_biggest_area_with_model
+from utilities.utils import get_contours_count_with_model, get_biggest_area_with_model
+
 
 class UNet:
     def __init__(self):
@@ -13,7 +14,7 @@ class UNet:
         self.unet = None
         self.__create()
         self.compile()
-        self.load_weights('SemanticSegmentationLesson/networks/unet_like_aug_v2')
+        self.load_weights('../SemanticSegmentationLesson/networks/unet_like_aug_v3')
         self.train_dataset = None
         self.test_dataset = None
 
@@ -235,7 +236,7 @@ class UNet:
         :return:
         """
         self.unet.fit(self.train_dataset, validation_data=self.test_dataset, epochs=epochs_number, initial_epoch=0)
-        self.unet.save_weights('./data/model/unet')
+        self.unet.save_weights('../data/model/unet')
         logging.info('Model fitted successfully, saved to "./data/model/unet"')
 
     def predict(self, arg):
@@ -264,4 +265,4 @@ class UNet:
         :return:
         """
         self.unet.load_weights(weights_path)
-        logging.info('MWeights loaded successfully')
+        logging.info('Weights loaded successfully')
