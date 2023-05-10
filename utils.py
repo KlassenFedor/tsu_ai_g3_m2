@@ -4,7 +4,7 @@ from skimage import measure
 import cv2
 
 
-def get_contours_count(image, model, sample_size, classes):
+def get_contours_count_with_model(image, model, sample_size, classes):
     sample = resize(image, sample_size)
     predict = model.predict(sample.reshape((1,) + sample_size + (3,)))
     predict = predict.reshape(sample_size + (classes,))
@@ -13,7 +13,7 @@ def get_contours_count(image, model, sample_size, classes):
     return len(contours)
 
 
-def get_biggest_area(image, model, sample_size, classes):
+def get_biggest_area_with_model(image, model, sample_size, classes):
     sample = resize(image, sample_size)
     predict = model.predict(sample.reshape((1,) + sample_size + (3,)))
     predict = predict.reshape(sample_size + (classes,))

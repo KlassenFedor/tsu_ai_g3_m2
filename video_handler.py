@@ -69,8 +69,8 @@ class VideoHandler:
         return frame, contours_count, np.round(biggest_area / (output_size[0] * output_size[1]), 6)
 
     def apply_brightness_contrast(self, input_img, brightness=0, contrast=0, prod=False):
-        brightness = map(brightness, 0, 510, -255, 255)
-        contrast = map(contrast, 0, 254, -127, 127)
+        brightness = self.map(brightness, 0, 510, -255, 255)
+        contrast = self.map(contrast, 0, 254, -127, 127)
 
         if brightness != 0:
             if brightness > 0:
@@ -113,7 +113,7 @@ class VideoHandler:
                 frame = self.apply_brightness_contrast(frame, 100 + 255, 65 + 127, prod=False)
 
                 frame = imutils.resize(frame, width=700)
-                frame, contours, area = self.frame_to_mask(frame)
+                frame, contours, area = self.frame_to_mask(frame, (256, 256), (1280, 1028), 1)
                 cv2.putText(frame, 'Amount:{}'.format(contours), (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255),
                             1)
                 cv2.putText(frame, 'Max:{}'.format(area), (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)

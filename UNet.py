@@ -3,7 +3,7 @@ from pycocotools.coco import COCO
 from pathlib import Path
 import glob
 
-from utils import get_contours_count, get_biggest_area
+from utils import get_contours_count, get_biggest_area, get_contours_count_with_model, get_biggest_area_with_model
 
 
 class UNet:
@@ -12,6 +12,8 @@ class UNet:
         self.OUTPUT_SIZE = (1280, 1028)
         self.CLASSES = 1
         self.unet = None
+        self.create()
+        self.compile()
         self.train_dataset = None
         self.test_dataset = None
 
@@ -182,9 +184,12 @@ class UNet:
         self.unet.fit(self.train_dataset, validation_data=self.test_dataset, epochs=epochs_number, initial_epoch=0)
         self.unet.save_weights('./data/model/unet')
 
-    def predict(self, image):
-        contours_count = get_contours_count(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
-        biggest_area = get_biggest_area(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
+    def predict(self, arg):
+        return self.unet.predict(arg)
+
+    def predict_contours_and_biggest_area(self, image):
+        contours_count = get_contours_count_with_model(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
+        biggest_area = get_biggest_area_with_model(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
 
         return contours_count, biggest_area
 
