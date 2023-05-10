@@ -1,4 +1,9 @@
 import tensorflow as tf
+from pycocotools.coco import COCO
+from pathlib import Path
+import glob
+
+from utils import get_contours_count, get_biggest_area
 
 
 class UNet:
@@ -11,7 +16,25 @@ class UNet:
         self.test_dataset = None
 
     def set_data(self, dataset):
-        pass
+        ann_file = Path(dataset + '/result.json')
+        coco = COCO(ann_file)
+        img_ids = coco.getImgIds()
+        imgs = coco.loadImgs(img_ids)
+
+        images = sorted([dataset + '/images/9/' + img['file_name'][9:] for img in imgs])
+        masks = sorted(glob.glob(dataset + '/masks/*.png'))
+
+        images_dataset = tf.data.Dataset.from_tensor_slices(images)
+        masks_dataset = tf.data.Dataset.from_tensor_slices(masks)
+        dataset = tf.data.Dataset.zip((images_dataset, masks_dataset))
+
+        dataset = dataset.map(self.load_images, num_parallel_calls=tf.data.AUTOTUNE)
+        dataset = dataset.repeat(10)
+        dataset = dataset.map(self.augmentate_images, num_parallel_calls=tf.data.AUTOTUNE)
+        train_dataset = dataset.take(2500).cache()
+        test_dataset = dataset.skip(2500).take(300).cache()
+        self.train_dataset = train_dataset.batch(8)
+        self.test_dataset = test_dataset.batch(8)
 
     def load_images(self, image, mask):
         image = tf.io.read_file(image)
@@ -157,4 +180,13 @@ class UNet:
 
     def fit(self, epochs_number):
         self.unet.fit(self.train_dataset, validation_data=self.test_dataset, epochs=epochs_number, initial_epoch=0)
-        self.unet.save_weights('SemanticSegmentationLesson/networks/unet_like_aug')
+        self.unet.save_weights('./data/model/unet')
+
+    def predict(self, image):
+        contours_count = get_contours_count(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
+        biggest_area = get_biggest_area(image, self.unet, self.SAMPLE_SIZE, self.CLASSES)
+
+        return contours_count, biggest_area
+
+    def load_weights(self, weights_path):
+        self.unet.load_weights(weights_path)

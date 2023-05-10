@@ -8,16 +8,18 @@ import imutils
 
 
 class VideoHandler:
-    def __init__(self):
+    def __init__(self, model):
         self.rgb_colors = [
             (255, 255, 255),
             (255, 99, 71)
         ]
 
-    def frame_to_mask(self, frame, input_size, output_size, classes, model):
+        self.model = model
+
+    def frame_to_mask(self, frame, input_size, output_size, classes):
         sample = resize(frame, input_size)
 
-        predict = model.predict(sample.reshape((1,) + input_size + (3,)))
+        predict = self.model.predict(sample.reshape((1,) + input_size + (3,)))
         predict = predict.reshape(input_size + (classes,))
 
         scale = frame.shape[0] / input_size[0], frame.shape[1] / input_size[1]
