@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /tsu_ai_m2_dataset/
+.idea/
+/SemanticSegmentationLesson/
+/data/
