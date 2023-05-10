@@ -2,9 +2,11 @@ import cv2
 import numpy as np
 from skimage.transform import resize
 from skimage.morphology import dilation, disk
-from skimage.draw import polygon, polygon_perimeter
+from skimage.draw import polygon_perimeter
 from skimage import measure
 import imutils
+
+from app.utils.utils import apply_brightness_contrast
 
 
 class VideoHandler:
@@ -68,39 +70,6 @@ class VideoHandler:
 
         return frame, contours_count, np.round(biggest_area / (output_size[0] * output_size[1]), 6)
 
-    def apply_brightness_contrast(self, input_img, brightness=0, contrast=0, prod=False):
-        brightness = self.map(brightness, 0, 510, -255, 255)
-        contrast = self.map(contrast, 0, 254, -127, 127)
-
-        if brightness != 0:
-            if brightness > 0:
-                shadow = brightness
-                highlight = 255
-            else:
-                shadow = 0
-                highlight = 255 + brightness
-            alpha_b = (highlight - shadow) / 255
-            gamma_b = shadow
-
-            buf = cv2.addWeighted(input_img, alpha_b, input_img, 0, gamma_b)
-        else:
-            buf = input_img.copy()
-
-        if contrast != 0:
-            f = float(131 * (contrast + 127)) / (127 * (131 - contrast))
-            alpha_c = f
-            gamma_c = 127 * (1 - f)
-
-            buf = cv2.addWeighted(buf, alpha_c, buf, 0, gamma_c)
-
-        if not prod:
-            cv2.putText(buf, 'B:{},C:{}'.format(brightness, contrast), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                        (0, 0, 255), 2)
-        return buf
-
-    def map(self, x, in_min, in_max, out_min, out_max):
-        return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
-
     def show_video(self, video_path):
         cap = cv2.VideoCapture(video_path)
 
@@ -110,7 +79,7 @@ class VideoHandler:
         while cap.isOpened():
             ret, frame = cap.read()
             if ret:
-                frame = self.apply_brightness_contrast(frame, 100 + 255, 65 + 127, prod=False)
+                frame = apply_brightness_contrast(frame, 100 + 255, 65 + 127, prod=False)
 
                 frame = imutils.resize(frame, width=700)
                 frame, contours, area = self.frame_to_mask(frame, (256, 256), (1280, 1028), 1)
